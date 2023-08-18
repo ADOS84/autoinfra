@@ -27,7 +27,6 @@ steps:
       registryName="tailspinspacegame${resourceSuffix}"
       rgName='rg-pipeline'
       planName='tailspin-space-game-asp'
-#      az group create --name $rgName
       az appservice plan create \
       --name $planName \
       --resource-group $rgName \
