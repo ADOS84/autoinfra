@@ -1,0 +1,47 @@
+trigger:
+- main
+
+name: Deploy Bicep files2
+
+variables:
+  vmImageName: 'ubuntu-latest'
+  azureServiceConnection: 'autoinfra'
+  resourceGroupName: 'rg-pipeline'
+  location: 'eastus'
+#  templateFile: 'main.bicep'
+pool:
+  vmImage: $(vmImageName)
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: $(azureServiceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    useGlobalConfig: false
+    inlineScript: |
+      az --version
+      az configure --defaults location=eastus
+      resourceSuffix=$RANDOM
+      webName="tailspin-space-game-web-${resourceSuffix}"
+      registryName="tailspinspacegame${resourceSuffix}"
+      rgName='rg-pipeline'
+      planName='tailspin-space-game-asp'
+      az appservice plan create \
+      --name $planName \
+      --resource-group $rgName \
+      --sku F1 \
+      --is-linux
+      az webapp create \
+      --name $webName \
+      --resource-group $rgName \
+      --plan $planName \
+      --deployment-container-image-name $registryName.azurecr.io/web:latest
+      az webapp list \
+      --resource-group $rgName \
+      --query "[].{hostName: defaultHostName, state: state}" \
+      --output table
+      az acr list \
+      --resource-group $rgName \
+      --query "[].{loginServer: loginServer}" \
+      --output table
