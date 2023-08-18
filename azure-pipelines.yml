@@ -25,9 +25,9 @@ steps:
       resourceSuffix=$RANDOM
       webName="tailspin-space-game-web-${resourceSuffix}"
       registryName="tailspinspacegame${resourceSuffix}"
-      rgName='tailspin-space-game-rg'
+      rgName='rg-pipeline'
       planName='tailspin-space-game-asp'
-      az group create --name $rgName
+#      az group create --name $rgName
       az appservice plan create \
       --name $planName \
       --resource-group $rgName \
